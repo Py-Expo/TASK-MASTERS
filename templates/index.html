@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        body {
+            background-image: url("https://www.wallpapertip.com/wmimgs/11-111161_407198-title-man-made-money-currencies-wallpaper-indian.jpg");
+            font-family: Arial, sans-serif;
+            margin: 5;
+            padding: 5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            
+            background-color: #cb7c7c;
+        }
+        #chat-container {
+            background-color: #d28f8f;
+            width: 400px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(151, 58, 58, 0.1);
+            overflow: hidden;
+        }
+        #messages {
+            height: 300px;
+            overflow-y: scroll;
+            padding: 10px;
+            background-color: #d7cccc;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 5px;
+        
+        }
+        .user {
+            text-align: right;
+            background-color: #b0bbc7;
+            color: #120101;
+        }
+        .bot {
+            text-align: left;
+            background-color: #28a745;
+            color: #fff;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: none;
+            border-top: 1px solid #ccc;
+            border-radius: 0;
+            outline: none;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: #9a5151;
+            border: none;
+            border-radius: 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="messages"></div>
+        <input type="text" id="user-input" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        function sendMessage() {
+            var userMessage = document.getElementById("user-input").value;
+            appendMessage("user", userMessage);
+            document.getElementById("user-input").value = "";
+
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: userMessage
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                appendMessage("bot", data.response);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function appendMessage(sender, message) {
+            var messagesContainer = document.getElementById("messages");
+            var messageDiv = document.createElement("div");
+            messageDiv.className = "message " + sender;
+            messageDiv.textContent = message;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    </script>
+</body>
+</html>
